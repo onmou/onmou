@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/profile-banner.gif" alt="Animated profile banner" width="900" />
+  <img src="./assets/profile-banner.gif" alt="Animated profile banner" width="1000" />
 </p>
 
 <h1 align="center">onmou</h1>

@@ -11,8 +11,10 @@ const inputVideo = path.resolve(process.argv[2] ?? process.env.INPUT_VIDEO ?? 'i
 const workDir = path.join(repoRoot, 'work', 'profile-banner');
 const assetsDir = path.join(repoRoot, 'assets');
 
-const width = 720;
-const fps = 12;
+const gifWidth = 1280;
+const gifFps = 24;
+const svgWidth = 720;
+const svgFps = 12;
 const svgOptions = {
   preset: 'poster',
   mode: 'polygon',
@@ -81,7 +83,7 @@ async function main() {
     '-i',
     inputVideo,
     '-filter_complex',
-    `[0:v]fps=${fps},scale=${width}:-2:flags=lanczos,split[a][b];[a]palettegen=max_colors=256:stats_mode=full[p];[b][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle`,
+    `[0:v]fps=${gifFps},scale=${gifWidth}:-2:flags=lanczos,split[a][b];[a]palettegen=max_colors=256:stats_mode=full[p];[b][p]paletteuse=dither=none:diff_mode=rectangle`,
     '-loop',
     '0',
     '-an',
@@ -96,7 +98,7 @@ async function main() {
     '-i',
     inputVideo,
     '-vf',
-    `fps=${fps},scale=${width}:-2:flags=lanczos,format=rgba`,
+    `fps=${svgFps},scale=${svgWidth}:-2:flags=lanczos,format=rgba`,
     path.join(frameDir, 'frame-%04d.png'),
   ]);
 
@@ -107,7 +109,7 @@ async function main() {
     throw new Error('FFmpeg produced no frames');
   }
 
-  const duration = (frames.length / fps).toFixed(6);
+  const duration = (frames.length / svgFps).toFixed(6);
   const vectorFrames = [];
   for (let index = 0; index < frames.length; index += 1) {
     const frameBuffer = await readFile(path.join(frameDir, frames[index]));
@@ -122,7 +124,7 @@ async function main() {
 
   const svg = [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${Math.round((width * 9) / 16)}" role="img" aria-labelledby="title desc">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgWidth} ${Math.round((svgWidth * 9) / 16)}" role="img" aria-labelledby="title desc">`,
     '<title id="title">Animated profile banner</title>',
     '<desc id="desc">A blue and cyan network mark moving through a dark space.</desc>',
     ...vectorFrames,
@@ -133,7 +135,7 @@ async function main() {
 
   console.log(`wrote ${gifPath}`);
   console.log(`wrote ${svgPath}`);
-  console.log(`frames=${frames.length} fps=${fps} duration=${duration}s`);
+  console.log(`gif=${gifWidth}px/${gifFps}fps svg=${svgWidth}px/${svgFps}fps frames=${frames.length} duration=${duration}s`);
 }
 
 main().catch((error) => {
