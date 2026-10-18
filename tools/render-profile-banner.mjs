@@ -72,7 +72,7 @@ async function main() {
   await mkdir(frameDir, { recursive: true });
   await mkdir(assetsDir, { recursive: true });
 
-  const gifPath = path.join(assetsDir, 'profile-banner.gif');
+  const gifPath = path.join(assetsDir, 'profile-banner-hd.gif');
   const svgPath = path.join(assetsDir, 'profile-banner.svg');
 
   await run(ffmpegPath, [
