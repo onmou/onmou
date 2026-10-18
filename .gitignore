@@ -1,0 +1,5 @@
+node_modules/
+work/
+*.mp4
+*.mov
+*.webm
